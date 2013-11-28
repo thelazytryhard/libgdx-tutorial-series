@@ -16,8 +16,6 @@ public class Enemy {
 		this.position = position;
 		bounds = new Rectangle(position.x, position.y, 25,25);
 		this.player = player;
-		
-		System.out.println("penis");
 	}
 	
 	public void update(){
@@ -56,7 +54,5 @@ public class Enemy {
 
 	public void setBounds(Rectangle bounds) {
 		this.bounds = bounds;
-	}
-	
-	
+	}	
 }

@@ -87,6 +87,8 @@ public class Tutorial implements ApplicationListener{
 		
 		stage.addActor(label);
 		
+		
+		
 	}
 
 	@Override

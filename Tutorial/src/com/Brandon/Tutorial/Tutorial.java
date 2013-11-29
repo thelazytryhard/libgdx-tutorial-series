@@ -12,11 +12,17 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
 public class Tutorial implements ApplicationListener{
 
@@ -36,6 +42,12 @@ public class Tutorial implements ApplicationListener{
 	Label label;
 	LabelStyle style;
 	BitmapFont font;
+	
+	TextureAtlas buttonAtlas;
+	TextButtonStyle buttonStyle;
+	TextButton button;
+	Skin skin;
+	
 	
 	@Override
 	public void create() {		
@@ -87,8 +99,30 @@ public class Tutorial implements ApplicationListener{
 		
 		stage.addActor(label);
 		
+		skin = new Skin();
+		buttonAtlas = new TextureAtlas("buttons/button.pack");
+		skin.addRegions(buttonAtlas);
+		
+		buttonStyle = new TextButtonStyle();
+		buttonStyle.up = skin.getDrawable("button");
+		buttonStyle.over = skin.getDrawable("buttonpressed");
+		buttonStyle.down = skin.getDrawable("buttonpressed");
+		buttonStyle.font = font;
+		
+		button = new TextButton("thelazytryhard is lame", buttonStyle);
 		
 		
+		stage.addActor(button);
+		Gdx.input.setInputProcessor(stage);
+		
+		button.addListener(new InputListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				player.getPosition().x = 2;
+				System.out.println("clicked");
+				return true;
+			}
+		});
 	}
 
 	@Override
@@ -131,11 +165,11 @@ public class Tutorial implements ApplicationListener{
 			batch.draw(cur.getEnemyTexture(), cur.getPosition().x, cur.getPosition().y, 25, 25);
 			
 			if(player.getBounds().overlaps(cur.getBounds())){
-				System.out.println("PLAYER HIT!");
+				//System.out.println("PLAYER HIT!");
 			}
 		}
 		
-		System.out.println(enemies.size());
+		//System.out.println(enemies.size());
 		
 		stage.draw();
 		batch.end();

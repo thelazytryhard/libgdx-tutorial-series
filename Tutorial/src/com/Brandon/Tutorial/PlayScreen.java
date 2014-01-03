@@ -8,15 +8,26 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
 public class PlayScreen implements Screen{
-
-	 SpriteBatch batch;
+	
+	SpriteBatch batch;
      Player player;
      InputProcessor inputProcessor;
      Vector2 position;
@@ -30,21 +41,29 @@ public class PlayScreen implements Screen{
 
      ArrayList<Tile> tiles;
      Iterator<Tile> tileIterator;
+     PolygonShape box;
+     OrthographicCamera cam;
      
      Enemy enemy;
      Game game;
-	
+     
+     Sound sound;
+     Music music;
+     
      public PlayScreen(Game game){
     	 this.game = game;
      }
      
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
         
         tree.update();
-        player.update();
+       
+        cam.position.set(player.getPosition().x + (player.getCurrentFrame().getRegionWidth() / 2), player.getPosition().y + (player.getCurrentFrame().getRegionHeight() / 2), 0);
+        batch.setProjectionMatrix(cam.combined);
+        cam.update();
         
         batch.begin();
         
@@ -75,12 +94,12 @@ public class PlayScreen implements Screen{
                 batch.draw(cur.getEnemyTexture(), cur.getPosition().x, cur.getPosition().y, 25, 25);
                 
                 if(player.getBounds().overlaps(cur.getBounds())){
-                        //System.out.println("PLAYER HIT!");
+                    //System.out.println("PLAYER HIT!");
+                	
                 }
         }
         
-        
-        
+        player.update();
         //System.out.println(enemies.size());
         
         batch.end();
@@ -96,6 +115,9 @@ public class PlayScreen implements Screen{
 
 	@Override
 	public void show() {
+		
+		cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		
 		batch = new SpriteBatch();
         mario = new Texture(Gdx.files.internal("mario.png"));
         sr = new ShapeRenderer();
@@ -136,8 +158,8 @@ public class PlayScreen implements Screen{
 		
         tiles = new ArrayList<Tile>();
         
-        for(int i = 0; i < 10; i++){
-        	for(int j = 0; j < 10; j++){
+        for(int i = 0; i < 20; i++){
+        	for(int j = 0; j < 20d; j++){
         		int R = (int) ((Math.random() * (2 - 0) + 0));
         		if(R == 0){
         			tiles.add(new Tile(new Texture("grass.png"), i * 50, j * 50, 50, 50));
@@ -147,6 +169,11 @@ public class PlayScreen implements Screen{
         		}
         	}
         }
+        
+        sound = Gdx.audio.newSound(Gdx.files.internal("sound.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("sound.mp3"));
+        
+        //sound.play();
 	}
 
 	@Override

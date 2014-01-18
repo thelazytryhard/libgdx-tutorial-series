@@ -50,8 +50,9 @@ public class PlayScreen implements Screen{
      Sound sound;
      Music music;
      
-     public PlayScreen(Game game){
+     public PlayScreen(Game game, Player player){
     	 this.game = game;
+    	 this.player = player;
      }
      
 	@Override
@@ -130,26 +131,7 @@ public class PlayScreen implements Screen{
         trees.add(tree2);
         System.out.println(trees.size());
         
-        if(Gdx.files.local("player.dat").exists()){
-                try {
-                        player = new Player(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() /2), "mario.png");
-                        player.setPosition(Player.readPlayer()) ;
-                } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                } catch (IOException e) {
-                        e.printStackTrace();
-                }
-                System.out.println("Player Exists, Reading File");
-        }else{
-                player = new Player(new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() /2), "mario.png");
-                try {
-                        Player.savePlayer(player);
-                } catch (IOException e) {
-                        e.printStackTrace();
-                }
-                
-                System.out.println("Player Does Not Exist, Creating Player and Saving Player");
-        }
+       
         
         enemy = new Enemy(new Vector2(50,50), player);
         enemies.add(enemy);
@@ -173,6 +155,8 @@ public class PlayScreen implements Screen{
         sound = Gdx.audio.newSound(Gdx.files.internal("sound.mp3"));
         music = Gdx.audio.newMusic(Gdx.files.internal("sound.mp3"));
         
+        
+        System.out.println(player.getName());
         //sound.play();
 	}
 
